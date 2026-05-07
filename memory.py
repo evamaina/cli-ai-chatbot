@@ -1,48 +1,48 @@
 import sqlite3
 
-DB_NAME = "chatbot.db"
 
+class Memory:
+    def __init__(self, db_name="chatbot.db"):
+        self.db_name = db_name
+        self.create_table()
 
-def connect_db():
-    return sqlite3.connect(DB_NAME)
+    def connect(self):
+        return sqlite3.connect(self.db_name)
 
+    def create_table(self):
+        conn = self.connect()
+        cursor = conn.cursor()
 
-def create_table():
-    conn = connect_db()
-    cursor = conn.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            role TEXT NOT NULL,
+            content TEXT NOT NULL
+        )
+        """)
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        role TEXT NOT NULL,
-        content TEXT NOT NULL
-    )
-    """)
+        conn.commit()
+        conn.close()
 
-    conn.commit()
-    conn.close()
+    def save_message(self, role, content):
+        conn = self.connect()
+        cursor = conn.cursor()
 
+        cursor.execute(
+            "INSERT INTO messages (role, content) VALUES (?, ?)",
+            (role, content)
+        )
 
-def save_message(role, content):
-    conn = connect_db()
-    cursor = conn.cursor()
+        conn.commit()
+        conn.close()
 
-    cursor.execute(
-        "INSERT INTO messages (role, content) VALUES (?, ?)",
-        (role, content)
-    )
+    def load_messages(self):
+        conn = self.connect()
+        cursor = conn.cursor()
 
-    conn.commit()
-    conn.close()
+        cursor.execute("SELECT role, content FROM messages ORDER BY id ASC")
+        rows = cursor.fetchall()
 
+        conn.close()
 
-def load_messages():
-    conn = connect_db()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT role, content FROM messages ORDER BY id ASC")
-    rows = cursor.fetchall()
-
-    conn.close()
-
-    return [{"role": row[0], "content": row[1]} for row in rows]
+        return [{"role": row[0], "content": row[1]} for row in rows]
