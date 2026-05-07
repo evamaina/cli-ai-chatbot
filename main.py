@@ -1,30 +1,10 @@
-import os
-from dotenv import load_dotenv
-from openai import OpenAI
-from memory import Memory
-
-load_dotenv()
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-
-def ask_ai(conversation_history):
-    response = client.responses.create(
-        model="gpt-5.2",
-        instructions="You are a helpful beginner-friendly assistant.",
-        input=conversation_history,
-    )
-
-    return response.output_text
+from chatbot import Chatbot
 
 
 def main():
-    memory = Memory()
+    chatbot = Chatbot()
 
-    # Load memory from DB
-    conversation_history = memory.load_messages()
-
-    print("CLI AI Chatbot (OOP Version)")
+    print("CLI AI Chatbot")
     print("Type 'exit' to quit.\n")
 
     while True:
@@ -34,22 +14,7 @@ def main():
             print("Bot: Goodbye!")
             break
 
-        # Save + append user message
-        memory.save_message("user", user_message)
-        conversation_history.append({
-            "role": "user",
-            "content": user_message
-        })
-
-        bot_reply = ask_ai(conversation_history)
-
-        # Save + append bot reply
-        memory.save_message("assistant", bot_reply)
-        conversation_history.append({
-            "role": "assistant",
-            "content": bot_reply
-        })
-
+        bot_reply = chatbot.chat(user_message)
         print(f"Bot: {bot_reply}\n")
 
 
