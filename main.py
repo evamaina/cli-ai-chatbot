@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from db import create_table, save_message, load_messages
+from memory import create_table, save_message, load_messages
 
 load_dotenv()
 
