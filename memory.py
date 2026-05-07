@@ -46,3 +46,16 @@ class Memory:
         conn.close()
 
         return [{"role": row[0], "content": row[1]} for row in rows]
+    
+    def clear_memory(self):
+        conn = self.connect()
+        cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM messages")
+
+        conn.commit()
+        conn.close()
+
+
+    def get_history(self):
+        return self.load_messages()
