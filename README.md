@@ -1,33 +1,37 @@
 # CLI AI Chatbot (Step-by-Step Build)
 
-This project is a beginner-friendly AI chatbot built in Python that runs in the command line (CLI).
+A beginner-friendly AI chatbot built in Python that runs in the command line (CLI).
 
-The goal of this project is to learn how to:
-- Work with AI APIs (OpenAI)
-- Structure real-world Python projects
-- Build features step by step
-- Use Git and GitHub professionally (incremental commits)
+This project is built **step by step**, focusing on:
+- Understanding AI integration
+- Writing clean, modular code
+- Using GitHub professionally (incremental commits)
 
 ---
 
 ## 🚀 Features (Current Progress)
 
-### ✅ 1. Basic CLI Chatbot
-- User can type messages in the terminal
-- AI responds using OpenAI API
-- Runs in a continuous loop until user exits
+### ✅ 1. CLI Chat Interface
+- Chat with AI directly in the terminal
+- Continuous loop until exit
 
 ### ✅ 2. Session Memory
-- Chatbot remembers conversation within the same session
-- Uses a `conversation_history` list
-- Sends full conversation to the model instead of a single message
+- Remembers messages during runtime
+- Uses a conversation history list
 
-Example:
-You: My name is Eva
-Bot: Nice to meet you, Eva.
+### ✅ 3. Persistent Memory (SQLite)
+- Stores messages in a database (`chatbot.db`)
+- Loads past conversations when restarting the app
 
-You: What is my name?
-Bot: Your name is Eva.
+### ✅ 4. Smart Memory (Optimized Context)
+- Sends only recent messages to the AI (last N messages)
+- Improves performance and scalability
+
+### ✅ 5. Command System
+Built-in commands:
+/help → Show available commands
+/history → Show full conversation history
+/clear → Delete all stored memory
 
 
 ---
@@ -36,31 +40,38 @@ Bot: Your name is Eva.
 
 - Python
 - OpenAI API
-- python-dotenv (for environment variables)
+- SQLite (built-in database)
+- python-dotenv
 
 ---
 
 ## 📁 Project Structure
+
 cli-ai-chatbot/
 │
-├── main.py # Main chatbot logic
-├── .env # API key (not pushed to GitHub)
-├── .gitignore # Ignore sensitive and unnecessary files
-├── requirements.txt # Project dependencies
+├── main.py # Entry point (CLI loop)
+├── chatbot.py # Chatbot logic (AI + memory)
+├── memory.py # Database layer (SQLite)
+├── .env # API key (not committed)
+├── .gitignore
+├── requirements.txt
 └── README.md
+
 
 
 ---
 
 ## ⚙️ Setup Instructions
 
-### 1. Clone the repository
+### 1. Clone repository
 git clone https://github.com/evamaina/cli-ai-chatbot.git
 
 cd cli-ai-chatbot
 
 
+
 ### 2. Create virtual environment
+
 python3 -m venv venv
 source venv/bin/activate
 
@@ -69,28 +80,57 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 
-### 4. Add your API key
+### 4. Add API key
 
-Create a `.env` file:
+Create `.env` file:
 OPENAI_API_KEY=your_api_key_here
 
 
+---
+
+## ▶️ Run the App
+
+
+
 
 ---
 
-## ▶️ Run the chatbot
+## 🧠 How Memory Works
 
+### 1. Persistent Storage
+- Messages are saved in SQLite (`chatbot.db`)
+- Each message has:
+  - role (user / assistant)
+  - content
 
+### 2. Smart Context Loading
+- Only recent messages are sent to the AI
+- Full history remains stored in the database
+
+This balances:
+- Context awareness ✅
+- Performance ⚡
+- Scalability 📈
 
 ---
 
-## 🧠 How Session Memory Works
+## 🧩 Architecture Design
 
-- A list called `conversation_history` stores all messages
-- Each user and bot message is appended
-- The full history is sent to the AI model
+The project follows **separation of concerns**:
 
-This allows the chatbot to maintain context during a conversation.
+- `main.py` → CLI interface
+- `chatbot.py` → AI + conversation logic
+- `memory.py` → database operations
+
+This makes the code:
+- Easier to maintain
+- Easier to extend
+- Closer to production-level design
+
+---
+
+
+
 
 
 ## 👤 Author
