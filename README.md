@@ -55,7 +55,7 @@ cli-ai-chatbot/
 ## ⚙️ Setup Instructions
 
 ### 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/cli-ai-chatbot.git
+git clone https://github.com/evamaina/cli-ai-chatbot.git
 
 cd cli-ai-chatbot
 

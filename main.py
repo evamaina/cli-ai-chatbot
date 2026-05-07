@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+from db import create_table, save_message, load_messages
 
 load_dotenv()
 
@@ -18,9 +19,12 @@ def ask_ai(conversation_history):
 
 
 def main():
-    conversation_history = []
+    create_table()
 
-    print("CLI AI Chatbot with Session Memory")
+    # Load past memory
+    conversation_history = load_messages()
+
+    print("CLI AI Chatbot with Persistent Memory")
     print("Type 'exit' to quit.\n")
 
     while True:
@@ -30,12 +34,18 @@ def main():
             print("Bot: Goodbye!")
             break
 
+        # Save user message
+        save_message("user", user_message)
+
         conversation_history.append({
             "role": "user",
             "content": user_message
         })
 
         bot_reply = ask_ai(conversation_history)
+
+        # Save bot reply
+        save_message("assistant", bot_reply)
 
         conversation_history.append({
             "role": "assistant",
