@@ -59,3 +59,24 @@ class Memory:
 
     def get_history(self):
         return self.load_messages()
+    
+    
+    def load_recent_messages(self, limit=10):
+        conn = self.connect()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT role, content FROM messages
+            ORDER BY id DESC
+            LIMIT ?
+            """,
+            (limit,)
+        )
+
+        rows = cursor.fetchall()
+        conn.close()
+
+        rows.reverse()
+
+        return [{"role": row[0], "content": row[1]} for row in rows]

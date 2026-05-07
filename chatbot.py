@@ -1,44 +1,41 @@
-def chat(self, user_message):
-    # Handle commands
-    if user_message == "/clear":
-        self.memory.clear_memory()
-        self.conversation_history = []
-        return "Memory cleared."
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+from memory import Memory
 
-    if user_message == "/history":
-        history = self.memory.get_history()
-        if not history:
-            return "No history found."
+load_dotenv()
 
-        formatted = ""
-        for msg in history:
-            formatted += f"{msg['role']}: {msg['content']}\n"
 
-        return formatted
+class Chatbot:
+    def __init__(self):
+        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self.memory = Memory()
+        self.conversation_history = self.memory.load_recent_messages(limit=10)
 
-    if user_message == "/help":
-        return (
-            "Available commands:\n"
-            "/clear - Clear all memory\n"
-            "/history - Show conversation history\n"
-            "/help - Show this message"
+    def ask_ai(self):
+        response = self.client.responses.create(
+            model="gpt-5.2",
+            instructions="You are a helpful beginner-friendly assistant.",
+            input=self.conversation_history,
         )
 
-    # Normal chat flow
-    self.memory.save_message("user", user_message)
+        return response.output_text
 
-    self.conversation_history.append({
-        "role": "user",
-        "content": user_message
-    })
+    def chat(self, user_message):
+        self.memory.save_message("user", user_message)
 
-    bot_reply = self.ask_ai()
+        self.conversation_history.append({
+            "role": "user",
+            "content": user_message
+        })
 
-    self.memory.save_message("assistant", bot_reply)
+        bot_reply = self.ask_ai()
 
-    self.conversation_history.append({
-        "role": "assistant",
-        "content": bot_reply
-    })
+        self.memory.save_message("assistant", bot_reply)
 
-    return bot_reply
+        self.conversation_history.append({
+            "role": "assistant",
+            "content": bot_reply
+        })
+
+        return bot_reply
